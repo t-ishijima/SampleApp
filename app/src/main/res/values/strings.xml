@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SampleApp</string>
+    <string name="bt_search">検索</string>
+</resources>
