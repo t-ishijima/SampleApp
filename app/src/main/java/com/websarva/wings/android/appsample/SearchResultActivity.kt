@@ -167,6 +167,7 @@ class SearchResultActivity : AppCompatActivity() {
             val EndElevationReceiver = EndElevationReceiver()
             EndElevationReceiver.execute(_endLng, _endLat)
             val counter = _counter
+            // 171行目の_counterが_to配列の最大index番号よりも1大きい番号をさしてIndexOutOfBoundsExceptionが発生
             val heightDif = _to[_counter].toFloat() - _from[_counter].toFloat()
             val dpt = _to
             val dst = _from
