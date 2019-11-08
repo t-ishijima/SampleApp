@@ -1,8 +1,11 @@
 package com.websarva.wings.android.appsample
 
+import android.content.Intent
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.SimpleAdapter
 import android.widget.TextView
@@ -26,6 +29,7 @@ class SearchResultActivity : AppCompatActivity() {
     private val _timeDifs = mutableListOf<Int>()
     private var _busStopNames = mutableListOf<String>()
     private var _departureIndex = 0
+    private var _temp = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +38,7 @@ class SearchResultActivity : AppCompatActivity() {
         // 前のアクティビティからフォームに入力された出発地・到着地のデータを受け取る
         val departureStr = intent.getStringExtra("departureStr")
         val arrivalStr = intent.getStringExtra("arrivalStr")
+        _temp = intent.getStringExtra("temp")
         val busStopNamesStr = intent.getStringExtra("busStopNamesStr")
         // 文字列データをJSONArrayに変換
         val busStopNames = JSONArray(intent.getStringExtra("busStopNamesStr"))
@@ -192,6 +197,30 @@ class SearchResultActivity : AppCompatActivity() {
             val adapter = SimpleAdapter(applicationContext, _valueList, android.R.layout.simple_list_item_2, from, to)
             val lvValue = findViewById<ListView>(R.id.lvValue)
             lvValue.adapter = adapter
+            lvValue.onItemClickListener = ListItemClickListener()
+        }
+    }
+
+    private inner class ListItemClickListener : AdapterView.OnItemClickListener {
+        override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            val item = parent.getItemAtPosition(position) as MutableMap<String, String>
+            val itemSecName = item["secName"]
+            val itemValue = item["value"].toString()
+            val intent = Intent(applicationContext, ResultDetailActivity::class.java)
+            intent.putExtra("secName", itemSecName)
+            intent.putExtra("value", itemValue)
+            intent.putExtra("heightDif", _heightDifs[position].toString())
+            intent.putExtra("distanceText", _distanceTexts[position])
+            intent.putExtra("walkingTime", _walkingTimes[position])
+            intent.putExtra("timeDif", _timeDifs[position].toString())
+            val heightDifs = _heightDifs
+            val distanceTexts = _distanceTexts
+            val walkingTimes = _walkingTimes
+            val heightDif = _heightDifs[position]
+            val timeDif = _timeDifs[position]
+            val temp = _temp
+            intent.putExtra("temp", _temp)
+            startActivity(intent)
         }
     }
 

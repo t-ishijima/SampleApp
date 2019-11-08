@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     var _busStopNamesStr = ""
     var _busStopTimetableStr = ""
+    var _temp = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("arrivalStr", arrivalStr)
             intent.putExtra("busStopNamesStr", _busStopNamesStr)
             intent.putExtra("busStopTimetableStr", _busStopTimetableStr)
+            intent.putExtra("temp", _temp)
             startActivity(intent)
         }
     }
@@ -76,6 +78,34 @@ class MainActivity : AppCompatActivity() {
             _busStopTimetableStr = busStopTimetable.toString()
             val name = _busStopNamesStr
             val bus = _busStopTimetableStr
+            val receiver = WeatherReceiver()
+            receiver.execute()
+        }
+    }
+
+    // 天気API 東京の天気と気温を求める
+    private inner class WeatherReceiver() : AsyncTask<String, String, String>() {
+        override fun doInBackground(vararg params: String): String {
+            val TOKEN = "15a15d832d17cbb66c5fc51b7798192d"
+            val urlStr =
+                "http://api.openweathermap.org/data/2.5/weather?q=Tokyo&appid=${TOKEN}"
+            val url = URL(urlStr)
+            val con = url.openConnection() as HttpURLConnection
+            con.requestMethod = "GET"
+            con.connect()
+            val stream = con.inputStream
+            val result = is2String(stream)
+            con.disconnect()
+            stream.close()
+            return result
+        }
+
+        override fun onPostExecute(result: String) {
+            val rootJSON = JSONObject(result)
+            val main = rootJSON.getJSONObject("main")
+            _temp = (main.getDouble("temp") - 273.16).toString()
+            val temp = _temp
+
         }
     }
 
