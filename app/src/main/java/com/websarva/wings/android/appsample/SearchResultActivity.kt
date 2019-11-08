@@ -18,7 +18,6 @@ import java.text.SimpleDateFormat
 class SearchResultActivity : AppCompatActivity() {
     private val _valueList: MutableList<MutableMap<String, Any>> = mutableListOf()
     private var _counter = 0
-//    private var _range = 0..0
     private val _walkingTimes = mutableListOf<String>()
     private val _distanceTexts = mutableListOf<String>()
     private val _from = mutableListOf<String>()
@@ -26,6 +25,7 @@ class SearchResultActivity : AppCompatActivity() {
     private val _heightDifs = mutableListOf<Float>()
     private val _timeDifs = mutableListOf<Int>()
     private var _busStopNames = mutableListOf<String>()
+    private var _departureIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,14 +50,26 @@ class SearchResultActivity : AppCompatActivity() {
         busStopTimetable = busStopTimetable.replace("]", "")
         val TimetbleArray = busStopTimetable.split(",")
         // 前のアクティビティで入力された出発地・到着地のindex番号(バス停番号)を求める
-        val departureIndex = arrayList.indexOf(departureStr)
+         _departureIndex = arrayList.indexOf(departureStr)
         val arrivalIndex = arrayList.indexOf(arrivalStr)
 //        _range = departureIndex..arrivalIndex-1
         _busStopNames = arrayList
+        val dupArrayList = arrayList
         // 出発地と到着地の間にある区間の数だけWebAPIに接続したいのでループを回す
-        for(i in departureIndex..(arrivalIndex-1)){
+        for(i in _departureIndex..(arrivalIndex-1)){
             val receiver = MapDataReceiver()
-            receiver.execute(arrayList[i], arrayList[i+1])
+            // 真砂坂上と富坂上がそのままではGoogle Maps APIを使用できないので近場で置き換え
+            if (arrayList[i] == "真砂坂上"){
+                receiver.execute("本郷真砂パークハウス", arrayList[i+1])
+            } else if(arrayList[i+1] == "真砂坂上") {
+                receiver.execute(arrayList[i], "本郷真砂パークハウス")
+            } else if(arrayList[i] == "富坂上") {
+                receiver.execute("富坂上公衆トイレ", arrayList[i+1])
+            } else if(arrayList[i+1] == "富坂上"){
+                receiver.execute(arrayList[i], "富坂上公衆トイレ")
+            } else {
+                receiver.execute(arrayList[i], arrayList[i+1])
+            }
             // バス停間のバス移動時間も求める
             _timeDifs.add(getTimeDif(TimetbleArray[i], TimetbleArray[i+1]))
         }
@@ -164,16 +176,14 @@ class SearchResultActivity : AppCompatActivity() {
         override fun onPostExecute(result: String) {
             val rootJSON = JSONObject(result)
             _to.add(rootJSON.getString("elevation"))
-            val EndElevationReceiver = EndElevationReceiver()
-            EndElevationReceiver.execute(_endLng, _endLat)
             val counter = _counter
+            val goal = _to
+            val start = _from
             // 171行目の_counterが_to配列の最大index番号よりも1大きい番号をさしてIndexOutOfBoundsExceptionが発生
             val heightDif = _to[_counter].toFloat() - _from[_counter].toFloat()
-            val dpt = _to
-            val dst = _from
             _heightDifs.add(heightDif)
             val value = getValue(_walkingTimes[_counter].toInt(), _timeDifs[_counter])
-            val secName = _busStopNames[_counter] + "~" + _busStopNames[_counter+1]
+            val secName = _busStopNames[_departureIndex + _counter] + "~" + _busStopNames[_departureIndex + _counter+1]
             _valueList.add(mutableMapOf("secName" to secName, "value" to value))
             val valueList = _valueList
             _counter = _counter + 1
