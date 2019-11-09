@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">SampleApp</string>
     <string name="bt_search">検索</string>
+    <string name="tv_deg">気温　:　</string>
+    <string name="tv_height_dif">高低差　:　</string>
+    <string name="tv_distance">距離　:　</string>
+    <string name="tv_walking_time">徒歩　:　</string>
+    <string name="tv_time_dif">バス　:　</string>
 </resources>
