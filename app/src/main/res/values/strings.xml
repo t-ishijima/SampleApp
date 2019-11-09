@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SampleApp</string>
+    <string name="app_name">シェア散歩</string>
     <string name="bt_search">検索</string>
     <string name="tv_deg">気温　:　</string>
     <string name="tv_height_dif">高低差　:　</string>
