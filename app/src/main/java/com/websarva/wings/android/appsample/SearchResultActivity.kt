@@ -109,7 +109,7 @@ class SearchResultActivity : AppCompatActivity() {
             val jsonObject = jsonArray.getJSONObject(0)
             val distance = jsonObject.getString("distance")
             val distanceObj = JSONObject(distance)
-            _distanceTexts.add(distanceObj.getString("text"))
+            _distanceTexts.add(distanceObj.getString("value"))
             val distanceTexts = _distanceTexts
             val duration = jsonObject.getString("duration")
             val durationObj = JSONObject(duration)
