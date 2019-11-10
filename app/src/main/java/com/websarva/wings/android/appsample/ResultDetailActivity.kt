@@ -2,6 +2,7 @@ package com.websarva.wings.android.appsample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_result_detail.*
 
@@ -32,6 +33,14 @@ class ResultDetailActivity : AppCompatActivity() {
         tvDistance.setText(distance)
         tvWalkingTime.setText(walkingTime)
         tvBustimeDif.setText(timeDif)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == android.R.id.home) {
+            finish()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun formatHeightDif(value: String) : String {

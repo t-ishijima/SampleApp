@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
@@ -78,6 +79,7 @@ class SearchResultActivity : AppCompatActivity() {
             // バス停間のバス移動時間も求める
             _timeDifs.add(getTimeDif(TimetbleArray[i], TimetbleArray[i+1]))
         }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     // Google Maps APIに接続してそれぞれのバス停の緯度経度、区間の徒歩時間、区間距離を求める
@@ -184,7 +186,6 @@ class SearchResultActivity : AppCompatActivity() {
             val counter = _counter
             val goal = _to
             val start = _from
-            // 171行目の_counterが_to配列の最大index番号よりも1大きい番号をさしてIndexOutOfBoundsExceptionが発生
             val heightDif = _to[_counter].toFloat() - _from[_counter].toFloat()
             _heightDifs.add(heightDif)
             val value = getValue(_walkingTimes[_counter].toInt(), _timeDifs[_counter])
@@ -222,6 +223,13 @@ class SearchResultActivity : AppCompatActivity() {
             intent.putExtra("temp", _temp)
             startActivity(intent)
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == android.R.id.home) {
+            finish()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun is2String(stream: InputStream): String {
