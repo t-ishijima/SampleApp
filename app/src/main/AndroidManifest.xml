@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ResultDetailActivity"></activity>
+        <activity android:name=".MapActivity"></activity>
+        <activity android:name=".ResultDetailActivity" />
         <activity android:name=".SearchResultActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
