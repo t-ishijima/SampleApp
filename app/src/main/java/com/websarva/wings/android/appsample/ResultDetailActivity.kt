@@ -1,8 +1,11 @@
 package com.websarva.wings.android.appsample
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_result_detail.*
 
@@ -26,6 +29,7 @@ class ResultDetailActivity : AppCompatActivity() {
         val tvDistance = findViewById<TextView>(R.id.tvDistance)
         val tvWalkingTime = findViewById<TextView>(R.id.tvWalkingTime)
         val tvBustimeDif = findViewById<TextView>(R.id.tvBustimedif)
+        val btMap = findViewById<Button>(R.id.btMap)
         tvSecName.setText(secName)
         tvValue.setText(value)
         tvTemp.setText(temp)
@@ -33,7 +37,15 @@ class ResultDetailActivity : AppCompatActivity() {
         tvDistance.setText(distance)
         tvWalkingTime.setText(walkingTime)
         tvBustimeDif.setText(timeDif)
+        btMap.setOnClickListener(ButtonListener())
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private inner class ButtonListener : View.OnClickListener {
+        override fun onClick(view: View) {
+            val intent = Intent(applicationContext, MapActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
