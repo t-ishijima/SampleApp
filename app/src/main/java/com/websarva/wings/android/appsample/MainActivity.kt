@@ -18,6 +18,7 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
+    private val _helper = DatabaseHelper(this@MainActivity)
     var _busStopNamesStr = ""
     var _busStopTimetableStr = ""
     var _temp = ""
@@ -74,6 +75,41 @@ class MainActivity : AppCompatActivity() {
                 busStopNames.add(BusTimetableObject.getString("odpt:note").replace(":\\d+:\\d+".toRegex(),""))
                 busStopTimetable.add(BusTimetableObject.getString("odpt:arrivalTime"))
             }
+            val busStopSize = busStopNames.size
+            val secNames: MutableList<String> = mutableListOf()
+            for(i in 0..(busStopNames.size - 2)) {
+                secNames.add(busStopNames[i] + "~" + busStopNames[i + 1])
+            }
+            // すでに区間テーブルが作成されているかどうかを確認する処理
+            val db = _helper.writableDatabase
+            val sql = "SELECT * FROM sections WHERE _id = 1"
+            val cursor = db.rawQuery(sql, null)
+            // データベースから取得した値を格納する変数の用意。データがなかった時のために初期値も用意
+            var secName = ""
+            while(cursor.moveToNext()) {
+                val idx = cursor.getColumnIndex("section_name")
+                secName = cursor.getString(idx)
+            }
+            val range = 1..secNames.size
+            // 間違って挿入したデータを削除するSQL
+//            for(i in 1..32) {
+//                val sqlDelete = "DELETE FROM sections WHERE _id = ?"
+//                val stmt = db.compileStatement(sqlDelete)
+//                stmt.bindLong(1, i.toLong())
+//                stmt.executeUpdateDelete()
+//
+//            }
+            if (secName == "") {
+                for(i in range){
+                    val sqlInsert = "INSERT INTO sections (_id, section_name, stamp_qty) VALUES (?, ?, ?)"
+                    val stmt = db.compileStatement(sqlInsert)
+                    stmt.bindLong(1, i.toLong())
+                    stmt.bindString(2, secNames[i - 1])
+                    stmt.bindLong(3, 0.toLong())
+                    val id = stmt.executeInsert()
+                }
+            }
+
             _busStopNamesStr = busStopNames.toString()
             _busStopTimetableStr = busStopTimetable.toString()
             val name = _busStopNamesStr
@@ -120,5 +156,10 @@ class MainActivity : AppCompatActivity() {
         }
         reader.close()
         return sb.toString()
+    }
+
+    override fun onDestroy() {
+        _helper.close()
+        super.onDestroy()
     }
 }
