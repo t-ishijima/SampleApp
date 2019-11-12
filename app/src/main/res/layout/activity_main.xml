@@ -3,6 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginHorizontal="25dp"
     android:orientation="vertical">
 
     <EditText
@@ -10,17 +13,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:hint="@string/dpt_hint"
         android:inputType="text"/>
     <EditText
         android:id="@+id/etArrival"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:hint="@string/arv_hint"
         android:inputType="text"/>
     <Button
         android:id="@+id/btSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:enabled="false"
+        android:background="@drawable/button_background"
         android:text="@string/bt_search"/>
-
 </LinearLayout>

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">シェア散歩</string>
+    <string name="dpt_hint">出発地</string>
+    <string name="arv_hint">目的地</string>
     <string name="bt_search">検索</string>
     <string name="tv_deg">気温　:　</string>
     <string name="tv_height_dif">高低差　:　</string>

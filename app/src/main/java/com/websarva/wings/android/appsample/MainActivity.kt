@@ -1,5 +1,6 @@
 package com.websarva.wings.android.appsample
 
+
 import android.content.Intent
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +21,6 @@ class MainActivity : AppCompatActivity() {
     var _busStopNamesStr = ""
     var _busStopTimetableStr = ""
     var _temp = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -105,7 +105,8 @@ class MainActivity : AppCompatActivity() {
             val main = rootJSON.getJSONObject("main")
             _temp = (main.getDouble("temp") - 273.16).toString()
             val temp = _temp
-
+            val btSearch = findViewById<Button>(R.id.btSearch)
+            btSearch.isEnabled = true
         }
     }
 
