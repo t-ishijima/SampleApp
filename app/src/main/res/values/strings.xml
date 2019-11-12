@@ -8,4 +8,5 @@
     <string name="tv_distance">距離　:　</string>
     <string name="tv_walking_time">徒歩　:　</string>
     <string name="tv_time_dif">バス　:　</string>
+    <string name="bt_map">マップを見る</string>
 </resources>
