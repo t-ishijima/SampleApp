@@ -66,13 +66,17 @@ class SearchResultActivity : AppCompatActivity() {
             val receiver = MapDataReceiver()
             // 真砂坂上と富坂上がそのままではGoogle Maps APIを使用できないので近場で置き換え
             if (arrayList[i] == "真砂坂上"){
-                receiver.execute("本郷真砂パークハウス", arrayList[i+1])
+                receiver.execute("本郷真砂パークハウス", "文京シビックホール")
             } else if(arrayList[i+1] == "真砂坂上") {
                 receiver.execute(arrayList[i], "本郷真砂パークハウス")
+            } else if(arrayList[i] == "春日駅前") {
+                receiver.execute("文京シビックホール", "富坂上公衆トイレ")
+            } else if(arrayList[i+1] == "春日駅前") {
+                receiver.execute("本郷真砂パークハウス", "文京シビックホール")
             } else if(arrayList[i] == "富坂上") {
                 receiver.execute("富坂上公衆トイレ", arrayList[i+1])
             } else if(arrayList[i+1] == "富坂上"){
-                receiver.execute(arrayList[i], "富坂上公衆トイレ")
+                receiver.execute("文京シビックホール", "富坂上公衆トイレ")
             } else {
                 receiver.execute(arrayList[i], arrayList[i+1])
             }
