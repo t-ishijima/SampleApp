@@ -252,7 +252,12 @@ class SearchResultActivity : AppCompatActivity() {
         val dateTimeFrom = date1.time
         val Longdif = (dateTimeTo - dateTimeFrom) / 1000
         val dif = Longdif.toInt()
-        return dif
+        // 茗荷谷駅前~窪町小学校が誤データ?なのか0になるため
+        if (dif == 0) {
+            return 60
+        } else {
+            return dif
+        }
     }
 
     private fun getValue(facter1: Int, facter2: Int): Int {
