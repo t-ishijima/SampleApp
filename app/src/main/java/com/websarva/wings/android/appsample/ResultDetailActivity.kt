@@ -10,12 +10,22 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_result_detail.*
 
 class ResultDetailActivity : AppCompatActivity() {
+    private val _helper = DatabaseHelper(this@ResultDetailActivity)
+    private var _section_id = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result_detail)
 
         val secName = intent.getStringExtra("secName")
+        val db = _helper.writableDatabase
+        val sql = "SELECT * FROM sections WHERE section_name = ?"
+        val params = arrayOf(secName)
+        val cursor = db.rawQuery(sql, params)
+        while(cursor.moveToNext()) {
+            val index = cursor.getColumnIndex("_id")
+            _section_id = cursor.getInt(index)
+        }
         val value = intent.getStringExtra("value") + "ポイント"
         val temp = Math.floor(intent.getStringExtra("temp").toDouble()).toString() + "度"
         val heightDif = formatHeightDif(intent.getStringExtra("heightDif"))
@@ -43,7 +53,9 @@ class ResultDetailActivity : AppCompatActivity() {
 
     private inner class ButtonListener : View.OnClickListener {
         override fun onClick(view: View) {
+            val section_id_Str = _section_id.toString()
             val intent = Intent(applicationContext, MapActivity::class.java)
+            intent.putExtra("section_id_Str", section_id_Str)
             startActivity(intent)
         }
     }

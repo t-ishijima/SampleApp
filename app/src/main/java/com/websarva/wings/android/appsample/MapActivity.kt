@@ -20,8 +20,8 @@ import java.util.jar.Manifest
 class MapActivity : AppCompatActivity() {
 
     private lateinit var googleMap : GoogleMap
-    private var _latitude = 0.0
-    private var _longitude = 0.0
+    private var _latitude = 35.681236
+    private var _longitude = 139.767125
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +53,7 @@ class MapActivity : AppCompatActivity() {
             //位置情報の追跡を開始。
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
             putMarkers(googleMap, _latitude, _longitude)
+            val section_id = intent.getStringExtra("section_id_Str").toInt()
         }
     }
 
@@ -70,6 +71,7 @@ class MapActivity : AppCompatActivity() {
             //位置情報の追跡を開始。
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
             putMarkers(googleMap, _latitude, _longitude)
+            val section_id = intent.getStringExtra("section_id_Str").toInt()
         }
     }
 
