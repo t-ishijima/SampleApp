@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 
 /**
  * A simple [Fragment] subclass.
@@ -16,9 +17,14 @@ class ButtonFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_button, container, false)
+        val view = inflater.inflate(R.layout.fragment_button, container, false)
+        val button = view.findViewById<Button>(R.id.btLocation)
+
+
+
+        return view
     }
+
 
 
 }
