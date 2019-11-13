@@ -193,7 +193,7 @@ class SearchResultActivity : AppCompatActivity() {
             val heightDif = _to[_counter].toFloat() - _from[_counter].toFloat()
             _heightDifs.add(heightDif)
             val value = getValue(_walkingTimes[_counter].toInt(), _timeDifs[_counter])
-            val secName = _busStopNames[_departureIndex + _counter] + "~" + _busStopNames[_departureIndex + _counter+1]
+            val secName = _busStopNames[_departureIndex + _counter] + "-" + _busStopNames[_departureIndex + _counter+1]
             _valueList.add(mutableMapOf("secName" to secName, "value" to value))
             val valueList = _valueList
             _counter = _counter + 1

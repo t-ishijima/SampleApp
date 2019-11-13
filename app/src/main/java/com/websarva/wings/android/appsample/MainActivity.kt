@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             val busStopSize = busStopNames.size
             val secNames: MutableList<String> = mutableListOf()
             for(i in 0..(busStopNames.size - 2)) {
-                secNames.add(busStopNames[i] + "~" + busStopNames[i + 1])
+                secNames.add(busStopNames[i] + "-" + busStopNames[i + 1])
             }
             // すでに区間テーブルが作成されているかどうかを確認する処理
             val db = _helper.writableDatabase
@@ -91,14 +91,6 @@ class MainActivity : AppCompatActivity() {
                 secName = cursor.getString(idx)
             }
             val range = 1..secNames.size
-            // 間違って挿入したデータを削除するSQL
-//            for(i in 1..32) {
-//                val sqlDelete = "DELETE FROM sections WHERE _id = ?"
-//                val stmt = db.compileStatement(sqlDelete)
-//                stmt.bindLong(1, i.toLong())
-//                stmt.executeUpdateDelete()
-//
-//            }
             if (secName == "") {
                 for(i in range){
                     val sqlInsert = "INSERT INTO sections (_id, section_name, stamp_qty) VALUES (?, ?, ?)"
