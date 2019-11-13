@@ -64,7 +64,7 @@ class SearchResultActivity : AppCompatActivity() {
         // 出発地と到着地の間にある区間の数だけWebAPIに接続したいのでループを回す
         for(i in _departureIndex..(arrivalIndex-1)){
             val receiver = MapDataReceiver()
-            // 真砂坂上と富坂上がそのままではGoogle Maps APIを使用できないので近場で置き換え
+            // 真砂坂上と富坂上と春日駅前がそのままではGoogle Maps APIを使用できないので近場で置き換え
             if (arrayList[i] == "真砂坂上"){
                 receiver.execute("本郷真砂パークハウス", "文京シビックホール")
             } else if(arrayList[i+1] == "真砂坂上") {
