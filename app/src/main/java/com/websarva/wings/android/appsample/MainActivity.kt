@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     var _busStopNamesStr = ""
     var _busStopTimetableStr = ""
     var _temp = ""
+    var _humidity = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("busStopNamesStr", _busStopNamesStr)
             intent.putExtra("busStopTimetableStr", _busStopTimetableStr)
             intent.putExtra("temp", _temp)
+            intent.putExtra("humidity", _humidity)
             startActivity(intent)
         }
     }
@@ -134,7 +136,9 @@ class MainActivity : AppCompatActivity() {
             val rootJSON = JSONObject(result)
             val main = rootJSON.getJSONObject("main")
             _temp = (main.getDouble("temp") - 273.16).toString()
+            _humidity = (main.getDouble("humidity").toString())
             val temp = _temp
+            val humidity = _humidity
             val btSearch = findViewById<Button>(R.id.btSearch)
             btSearch.isEnabled = true
         }
