@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         receiver.execute()
         val btSearch = findViewById<Button>(R.id.btSearch)
         btSearch.setOnClickListener(SearchListener())
+        Toast.makeText(applicationContext, "ボタンはデータロード後押せるようになります！", Toast.LENGTH_LONG).show()
     }
 
     private inner class SearchListener : View.OnClickListener {
