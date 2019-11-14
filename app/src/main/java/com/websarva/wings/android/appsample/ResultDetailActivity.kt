@@ -12,15 +12,16 @@ import kotlinx.android.synthetic.main.activity_result_detail.*
 class ResultDetailActivity : AppCompatActivity() {
     private val _helper = DatabaseHelper(this@ResultDetailActivity)
     private var _section_id = 0
+    private var _section_name = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result_detail)
 
-        val secName = intent.getStringExtra("secName")
+        _section_name = intent.getStringExtra("secName")
         val db = _helper.writableDatabase
         val sql = "SELECT * FROM sections WHERE section_name = ?"
-        val params = arrayOf(secName)
+        val params = arrayOf(_section_name)
         val cursor = db.rawQuery(sql, params)
         while(cursor.moveToNext()) {
             val index = cursor.getColumnIndex("_id")
@@ -40,7 +41,7 @@ class ResultDetailActivity : AppCompatActivity() {
         val tvWalkingTime = findViewById<TextView>(R.id.tvWalkingTime)
         val tvBustimeDif = findViewById<TextView>(R.id.tvBustimedif)
         val btMap = findViewById<Button>(R.id.btMap)
-        tvSecName.setText(secName)
+        tvSecName.setText(_section_name)
         tvValue.setText(value)
         tvTemp.setText(temp)
         tvHeightDif.setText(heightDif)
@@ -56,6 +57,8 @@ class ResultDetailActivity : AppCompatActivity() {
             val section_id_Str = _section_id.toString()
             val intent = Intent(applicationContext, MapActivity::class.java)
             intent.putExtra("section_id_Str", section_id_Str)
+            val section_name = _section_name
+            intent.putExtra("section_name", _section_name)
             startActivity(intent)
         }
     }
