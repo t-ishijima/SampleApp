@@ -10,10 +10,12 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import java.util.jar.Manifest
 
@@ -31,6 +33,7 @@ class MapActivity : AppCompatActivity() {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync {
             googleMap = it
+            zoomTo(googleMap, intent.getStringExtra("section_id_Str").toLong())
         }
         val btStamp = findViewById<Button>(R.id.btStamp)
         btStamp.setOnClickListener(StampButtonListener())
@@ -132,6 +135,39 @@ class MapActivity : AppCompatActivity() {
         )
         marker.icon(descriptor)
         map.addMarker(marker)
+    }
+
+    private fun zoomTo(map: GoogleMap, section_id: Long) {
+        val db = _helper.writableDatabase
+        val sqlStamps = "SELECT * FROM stamps WHERE section_id = ${section_id}"
+        val latitudes = mutableListOf<Double>()
+        val longitudes = mutableListOf<Double>()
+        val cursor = db.rawQuery(sqlStamps, null)
+        while (cursor.moveToNext()) {
+            val latitude = cursor.getDouble(cursor.getColumnIndex("latitude"))
+            val longitude = cursor.getDouble(cursor.getColumnIndex("longitude"))
+            latitudes.add(latitude)
+            longitudes.add(longitude)
+        }
+        val locations = latitudes.zip(longitudes)
+        if (locations.size == 1) {
+            val latLng = LatLng(locations[0].first, locations[0].second)
+            val move = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+            map.moveCamera(move)
+        } else if (locations.size > 1) {
+            val bounds = LatLngBounds.Builder()
+            locations.forEach { location ->
+                bounds.include(LatLng(location.first, location.second))
+            }
+
+            val padding = (50 * resources.displayMetrics.density).toInt()
+            val move = CameraUpdateFactory.newLatLngBounds(bounds.build(),
+                resources.displayMetrics.widthPixels,
+                resources.displayMetrics.heightPixels,
+                padding)
+
+            map.moveCamera(move)
+        }
     }
 
     override fun onDestroy() {
