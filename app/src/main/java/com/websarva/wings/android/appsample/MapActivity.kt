@@ -57,8 +57,8 @@ class MapActivity : AppCompatActivity() {
             }
             //位置情報の追跡を開始。
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
-            putMarkers(googleMap, _latitude, _longitude)
             val section_id = intent.getStringExtra("section_id_Str").toLong()
+            putMarkers(googleMap, _latitude, _longitude, section_id)
             val db = _helper.writableDatabase
             val sqlCount = "SELECT COUNT(*) AS cnt FROM stamps"
             val cursor = db.rawQuery(sqlCount, null)
@@ -89,8 +89,8 @@ class MapActivity : AppCompatActivity() {
             }
             //位置情報の追跡を開始。
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
-            putMarkers(googleMap, _latitude, _longitude)
             val section_id = intent.getStringExtra("section_id_Str").toLong()
+            putMarkers(googleMap, _latitude, _longitude, section_id)
             val db = _helper.writableDatabase
             val sqlCount = "SELECT COUNT(*) AS cnt FROM stamps"
             val cursor = db.rawQuery(sqlCount, null)
@@ -126,8 +126,9 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
-    // スタンプボタンを押した時にマップにスタンプが押されるメソッド
-    private fun putMarkers(map: GoogleMap, latitude: Double, longitude: Double) {
+    // スタンプボタンを押した時にマップにスタンプが押され、区間テーブルのスタンプ数の個数が更新されるメソッド
+    private fun putMarkers(map: GoogleMap, latitude: Double, longitude: Double, section_id: Long) {
+        // スタンプを押す処理
         val latLng = LatLng(_latitude, _longitude)
         val marker = MarkerOptions()
             .position(latLng)
@@ -137,6 +138,25 @@ class MapActivity : AppCompatActivity() {
         )
         marker.icon(descriptor)
         map.addMarker(marker)
+        // 区間テーブルを更新する処理
+        val db = _helper.writableDatabase
+        // 区間がどれだけスタンプを所有しているかのSQL
+        val sqlStampQty = "SELECT * FROM sections WHERE _id = ${section_id}"
+        val cursor = db.rawQuery(sqlStampQty, null)
+        var stamp_qty = 0
+        while (cursor.moveToNext()) {
+            stamp_qty = cursor.getInt(cursor.getColumnIndex("stamp_qty"))
+        }
+        val sqlDelete = "DELETE FROM sections WHERE _id = ?"
+        var stmt = db.compileStatement(sqlDelete)
+        stmt.bindLong(1, section_id)
+        stmt.executeUpdateDelete()
+        val sqlInsert = "INSERT INTO sections (_id, section_name, stamp_qty) VALUES (?, ?, ?)"
+        stmt = db.compileStatement(sqlInsert)
+        stmt.bindLong(1, section_id)
+        stmt.bindString(2, intent.getStringExtra("section_name"))
+        stmt.bindLong(3, (stamp_qty + 1).toLong())
+        stmt.executeInsert()
     }
     // 位置情報に応じてカメラを移動させ、ズームさせるメソッド
     private fun zoomTo(map: GoogleMap, section_id: Long) {
