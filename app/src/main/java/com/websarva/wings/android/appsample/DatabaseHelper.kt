@@ -12,21 +12,24 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        val sb = StringBuilder()
-        sb.append("CREATE TABLE sections (")
-        sb.append("_id INTEGER PRIMARY KEY AUTOINCREMENT,")
-        sb.append("section_name TEXT,")
-        sb.append("stamp_qty INTEGER")
-        sb.append(");")
-        sb.append("CREATE TABLE stamps (")
-        sb.append("_id INTEGER PRIMARY KEY AUTOINCREMENT,")
-        sb.append("latitude REAL,")
-        sb.append("longitude REAL,")
-        sb.append("section_id INT")
-        sb.append(");")
-        val sql = sb.toString()
+        val sb_sections = StringBuilder()
+        sb_sections.append("CREATE TABLE sections (")
+        sb_sections.append("_id INTEGER PRIMARY KEY AUTOINCREMENT,")
+        sb_sections.append("section_name TEXT,")
+        sb_sections.append("stamp_qty INTEGER")
+        sb_sections.append(");")
+        val sql_sections = sb_sections.toString()
+        db.execSQL(sql_sections)
 
-        db.execSQL(sql)
+        val sb_stamps = StringBuilder()
+        sb_stamps.append("CREATE TABLE stamps (")
+        sb_stamps.append("_id INTEGER PRIMARY KEY AUTOINCREMENT,")
+        sb_stamps.append("latitude REAL,")
+        sb_stamps.append("longitude REAL,")
+        sb_stamps.append("section_id INT")
+        sb_stamps.append(");")
+        val sql_stamps = sb_stamps.toString()
+        db.execSQL(sql_stamps)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
