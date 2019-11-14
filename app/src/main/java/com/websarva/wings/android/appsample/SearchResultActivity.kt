@@ -6,10 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ListView
-import android.widget.SimpleAdapter
-import android.widget.TextView
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -58,7 +56,13 @@ class SearchResultActivity : AppCompatActivity() {
         // 前のアクティビティで入力された出発地・到着地のindex番号(バス停番号)を求める
          _departureIndex = arrayList.indexOf(departureStr)
         val arrivalIndex = arrayList.indexOf(arrivalStr)
-//        _range = departureIndex..arrivalIndex-1
+        if (_departureIndex == -1 || arrivalIndex == -1) {
+            Toast.makeText(applicationContext, "対応していない駅名です", Toast.LENGTH_LONG).show()
+            finish()
+        } else if (_departureIndex >= arrivalIndex) {
+            Toast.makeText(applicationContext, "下り線は今後対応予定です！", Toast.LENGTH_LONG).show()
+            finish()
+        }
         _busStopNames = arrayList
         val dupArrayList = arrayList
         // 出発地と到着地の間にある区間の数だけWebAPIに接続したいのでループを回す
