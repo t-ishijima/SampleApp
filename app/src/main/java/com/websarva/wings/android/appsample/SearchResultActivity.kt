@@ -29,6 +29,7 @@ class SearchResultActivity : AppCompatActivity() {
     private var _busStopNames = mutableListOf<String>()
     private var _departureIndex = 0
     private var _temp = ""
+    private val _helper = DatabaseHelper(this@SearchResultActivity)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -194,10 +195,28 @@ class SearchResultActivity : AppCompatActivity() {
             val counter = _counter
             val goal = _to
             val start = _from
+            val temp = intent.getStringExtra("temp")
+            val humidity = intent.getStringExtra("humidity")
             val heightDif = _to[_counter].toFloat() - _from[_counter].toFloat()
             _heightDifs.add(heightDif)
-            val value = getValue(_walkingTimes[_counter].toInt(), _timeDifs[_counter])
             val secName = _busStopNames[_departureIndex + _counter] + "-" + _busStopNames[_departureIndex + _counter+1]
+            val db = _helper.writableDatabase
+            val sql = "SELECT * FROM sections WHERE section_name = ?"
+            val params = arrayOf(secName)
+            val cursorSecId = db.rawQuery(sql, params)
+            var section_id = 0
+            while(cursorSecId.moveToNext()) {
+                val index = cursorSecId.getColumnIndex("_id")
+                section_id = cursorSecId.getInt(index)
+            }
+            val sqlStampQty = "SELECT * FROM sections WHERE _id = ${section_id}"
+            val cursorStamp = db.rawQuery(sqlStampQty, null)
+            var stamp_qty = 0
+            while (cursorStamp.moveToNext()) {
+                stamp_qty = cursorStamp.getInt(cursorStamp.getColumnIndex("stamp_qty"))
+            }
+            val value = getValue(_walkingTimes[_counter].toInt(), temp.toDouble(), humidity.toDouble(), _timeDifs[_counter], stamp_qty)
+
             _valueList.add(mutableMapOf("secName" to secName, "value" to value))
             val valueList = _valueList
             _counter = _counter + 1
@@ -268,7 +287,29 @@ class SearchResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun getValue(facter1: Int, facter2: Int): Int {
-        return facter1 + facter2
+    private fun getValue(walkingTime: Int, temp: Double, humidity: Double, busTime: Int, stamp_qty: Int): Double {
+        val kcal = 3.80975 * walkingTime
+        val radio = (Math.round((kcal / 12.375) * 10)) / 10
+        var di = 0.81 * temp + 0.01 * humidity * (0.99 * temp - 14.3) + 46.3
+        if(di > 85) {
+            di = 0.03
+        } else if(0 <= di && di <= 55 || 80 <= di && di <= 85) {
+            di = 0.02
+        } else if(55 <= di && di <= 60 || 75 <= di && di <= 80) {
+            di = 0.01
+        } else if(60 <= di && di <= 65 || 70 <= di && di <= 75) {
+            di = -0.01
+        } else if (65 <= di && di <= 70) {
+            di = -0.02
+        }
+        val radioDash = radio + di
+        var timedif = (walkingTime - busTime).toDouble()
+        if (timedif == 0.0) {
+            timedif = 0.1
+        }
+        val x = stamp_qty / radioDash
+        val y = stamp_qty / timedif
+        val z = x + y
+        return z
     }
 }
