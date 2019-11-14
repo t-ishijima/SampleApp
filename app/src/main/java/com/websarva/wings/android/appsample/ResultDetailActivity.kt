@@ -74,4 +74,9 @@ class ResultDetailActivity : AppCompatActivity() {
     private fun formatTime(value: String) : String {
         return (Math.round(value.toFloat()) / 60).toString() + "分"
     }
+
+    override fun onDestroy() {
+        _helper.close()
+        super.onDestroy()
+    }
 }
