@@ -34,6 +34,7 @@ class MapActivity : AppCompatActivity() {
         mapFragment.getMapAsync {
             googleMap = it
             zoomTo(googleMap, intent.getStringExtra("section_id_Str").toLong())
+            showMarkers(googleMap, intent.getStringExtra("section_id_Str").toLong())
         }
         val btStamp = findViewById<Button>(R.id.btStamp)
         btStamp.setOnClickListener(StampButtonListener())
@@ -125,6 +126,7 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
+    // スタンプボタンを押した時にマップにスタンプが押されるメソッド
     private fun putMarkers(map: GoogleMap, latitude: Double, longitude: Double) {
         val latLng = LatLng(_latitude, _longitude)
         val marker = MarkerOptions()
@@ -136,7 +138,7 @@ class MapActivity : AppCompatActivity() {
         marker.icon(descriptor)
         map.addMarker(marker)
     }
-
+    // 位置情報に応じてカメラを移動させ、ズームさせるメソッド
     private fun zoomTo(map: GoogleMap, section_id: Long) {
         val db = _helper.writableDatabase
         val sqlStamps = "SELECT * FROM stamps WHERE section_id = ${section_id}"
@@ -167,6 +169,31 @@ class MapActivity : AppCompatActivity() {
                 padding)
 
             map.moveCamera(move)
+        }
+    }
+    // データベースに格納されている該当区間に属するスタンプをマップに表示
+    private fun showMarkers(map: GoogleMap, section_id: Long) {
+        val db = _helper.writableDatabase
+        val sqlShowStamps = "SELECT * FROM stamps WHERE section_id = ${section_id}"
+        val latitudes = mutableListOf<Double>()
+        val longitudes = mutableListOf<Double>()
+        val cursor = db.rawQuery(sqlShowStamps, null)
+        while (cursor.moveToNext()) {
+            val latitude = cursor.getDouble(cursor.getColumnIndex("latitude"))
+            val longitude = cursor.getDouble(cursor.getColumnIndex("longitude"))
+            latitudes.add(latitude)
+            longitudes.add(longitude)
+        }
+        val locations = latitudes.zip(longitudes)
+        locations.forEach { location ->
+            val latLng = LatLng(location.first, location.second)
+            val marker = MarkerOptions()
+                .position(latLng)
+                .draggable(false)
+            val descriptor = BitmapDescriptorFactory.defaultMarker(
+                BitmapDescriptorFactory.HUE_BLUE)
+            marker.icon(descriptor)
+            map.addMarker(marker)
         }
     }
 
