@@ -20,6 +20,7 @@ import java.util.jar.Manifest
 class MapActivity : AppCompatActivity() {
 
     private lateinit var googleMap : GoogleMap
+    private val _helper = DatabaseHelper(this@MapActivity)
     private var _latitude = 35.681236
     private var _longitude = 139.767125
 
@@ -53,7 +54,21 @@ class MapActivity : AppCompatActivity() {
             //位置情報の追跡を開始。
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
             putMarkers(googleMap, _latitude, _longitude)
-            val section_id = intent.getStringExtra("section_id_Str").toInt()
+            val section_id = intent.getStringExtra("section_id_Str").toLong()
+            val db = _helper.writableDatabase
+            val sqlCount = "SELECT COUNT(*) AS cnt FROM stamps"
+            val cursor = db.rawQuery(sqlCount, null)
+            cursor.moveToFirst()
+            val count = cursor.getInt(cursor.getColumnIndex("cnt"))
+            cursor.close()
+
+            val sqlInsert = "INSERT INTO stamps (_id, latitude, longitude, section_id) VALUES (?, ?, ?, ?)"
+            val stmt = db.compileStatement(sqlInsert)
+            stmt.bindLong(1, (count + 1).toLong())
+            stmt.bindDouble(2, _latitude)
+            stmt.bindDouble(3, _longitude)
+            stmt.bindLong(4, section_id)
+            stmt.executeInsert()
         }
     }
 
@@ -71,7 +86,21 @@ class MapActivity : AppCompatActivity() {
             //位置情報の追跡を開始。
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
             putMarkers(googleMap, _latitude, _longitude)
-            val section_id = intent.getStringExtra("section_id_Str").toInt()
+            val section_id = intent.getStringExtra("section_id_Str").toLong()
+            val db = _helper.writableDatabase
+            val sqlCount = "SELECT COUNT(*) AS cnt FROM stamps"
+            val cursor = db.rawQuery(sqlCount, null)
+            cursor.moveToFirst()
+            val count = cursor.getInt(cursor.getColumnIndex("cnt"))
+            cursor.close()
+
+            val sqlInsert = "INSERT INTO stamps (_id, latitude, longitude, section_id) VALUES (?, ?, ?, ?)"
+            val stmt = db.compileStatement(sqlInsert)
+            stmt.bindLong(1, (count + 1).toLong())
+            stmt.bindDouble(2, _latitude)
+            stmt.bindDouble(3, _longitude)
+            stmt.bindLong(4, section_id)
+            stmt.executeInsert()
         }
     }
 
@@ -103,5 +132,10 @@ class MapActivity : AppCompatActivity() {
         )
         marker.icon(descriptor)
         map.addMarker(marker)
+    }
+
+    override fun onDestroy() {
+        _helper.close()
+        super.onDestroy()
     }
 }
