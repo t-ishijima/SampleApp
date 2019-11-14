@@ -7,16 +7,15 @@ import android.location.LocationListener
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import java.util.jar.Manifest
 
 class MapActivity : AppCompatActivity() {
@@ -36,8 +35,9 @@ class MapActivity : AppCompatActivity() {
             zoomTo(googleMap, intent.getStringExtra("section_id_Str").toLong())
             showMarkers(googleMap, intent.getStringExtra("section_id_Str").toLong())
         }
-        val btStamp = findViewById<Button>(R.id.btStamp)
+        val btStamp = findViewById<ImageButton>(R.id.btStamp)
         btStamp.setOnClickListener(StampButtonListener())
+        supportActionBar?.setDisplayHomeAsUpEnabled((true))
     }
 
     private inner class StampButtonListener : View.OnClickListener {
@@ -133,9 +133,7 @@ class MapActivity : AppCompatActivity() {
         val marker = MarkerOptions()
             .position(latLng)
             .draggable(false)
-        val descriptor = BitmapDescriptorFactory.defaultMarker(
-            BitmapDescriptorFactory.HUE_BLUE
-        )
+        val descriptor = BitmapDescriptorFactory.fromResource(R.drawable.stamp)
         marker.icon(descriptor)
         map.addMarker(marker)
         // 区間テーブルを更新する処理
@@ -205,16 +203,24 @@ class MapActivity : AppCompatActivity() {
             longitudes.add(longitude)
         }
         val locations = latitudes.zip(longitudes)
+        val lineOptions = PolylineOptions()
         locations.forEach { location ->
             val latLng = LatLng(location.first, location.second)
+            lineOptions.add(latLng)
             val marker = MarkerOptions()
                 .position(latLng)
                 .draggable(false)
-            val descriptor = BitmapDescriptorFactory.defaultMarker(
-                BitmapDescriptorFactory.HUE_BLUE)
+            val descriptor = BitmapDescriptorFactory.fromResource(R.drawable.stamp)
             marker.icon(descriptor)
             map.addMarker(marker)
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == android.R.id.home) {
+            finish()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroy() {
